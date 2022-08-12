@@ -17,17 +17,37 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 // GET all rows
-// db.query(`SELECT * FROM candidates`, (err, rows) => {
-//   console.log(rows);
-// });
 
-// GET a single candidate
-// db.query(`SELECT * FROM candidates WHERE id = 1`, (err,row) => {
-//     if (err) {
-//         console.log(err)
-//     }
-//     console.log(row);
-// })
+app.get("/api/candidates", (req, res) => {
+  const sql = `SELECT * FROM candidates`;
+
+  db.query(sql, (err, rows) => {
+    if (err) {
+      res.status(500).json({ error: err.message });
+      return;
+    }
+    res.json({
+      message: "Success!",
+      data: rows,
+    });
+  });
+});
+
+app.get('/api/candidate/:id', (req, res) => {
+  const sql = `SELECT * FROM candidates WHERE id = ?`;
+  const params = [req.params.id];
+
+  db.query(sql, params, (err, row) => {
+    if (err) {
+      res.status(400).json({ error: err.message });
+      return;
+    }
+    res.json({
+      message: "Success!",
+      data: row,
+    });
+  });
+});
 
 // Delete a candidate
 // db.query(`DELETE FROM candidates WHERE id = ?`, 1, (err, result) => {
